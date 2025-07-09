@@ -14,7 +14,7 @@ namespace BoletoNet
         public event EventHandler<LinhaDeArquivoGeradaArgs> LinhaDeArquivoGerada;
 
         #region Variáveis
-        private IArquivoRemessa _arquivoRemessa;
+        private readonly IArquivoRemessa _arquivoRemessa;
         #endregion
 
         #region Construtores
@@ -35,6 +35,10 @@ namespace BoletoNet
             {
                 case TipoArquivo.CNAB240:
                     _arquivoRemessa = new ArquivoRemessaCNAB240();
+                    _arquivoRemessa.LinhaDeArquivoGerada += new EventHandler<LinhaDeArquivoGeradaArgs>(_arquivoRemessa_LinhaDeArquivoGerada);
+                    break;
+                case TipoArquivo.CNAB240EmModoTeste:
+                    _arquivoRemessa = new ArquivoRemessaCNAB240(){ ModoTeste = true };
                     _arquivoRemessa.LinhaDeArquivoGerada += new EventHandler<LinhaDeArquivoGeradaArgs>(_arquivoRemessa_LinhaDeArquivoGerada);
                     break;
                 case TipoArquivo.CNAB400:

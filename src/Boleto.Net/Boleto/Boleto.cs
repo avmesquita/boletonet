@@ -1,3 +1,5 @@
+using BoletoNet.Enums;
+
 namespace BoletoNet
 {
 	using System;
@@ -19,7 +21,7 @@ namespace BoletoNet
 		private string _variacaoCarteira = string.Empty;
 		private string _nossoNumero = string.Empty;
 		private string _digitoNossoNumero = string.Empty;
-        private bool _apenasRegistrar = false;
+        private TipoEmissao _tipoEmissao = Enums.TipoEmissao.EmissaoPeloCedente;
 		private DateTime _dataVencimento;
 		private DateTime _dataDocumento;
 		private DateTime _dataProcessamento;
@@ -37,6 +39,7 @@ namespace BoletoNet
 		private string _especie = "R$";
 		private int _moeda = 9;
 		private string _usoBanco = string.Empty;
+		private string _tituloAvalista = "Beneficiário Final";
 
 		private Cedente _cedente;
 		private int _categoria;
@@ -63,6 +66,7 @@ namespace BoletoNet
 		private DateTime _dataDesconto;
 		private DateTime _dataOutrosAcrescimos;
 		private DateTime _dataOutrosDescontos;
+        private DateTime _dataLimitePagamento;
 		private short _percentualIOS;
         private short _modalidadeCobranca = 0;
         private short _numeroDiasBaixa = 0;
@@ -72,7 +76,7 @@ namespace BoletoNet
         private string _tipoImpressao = "A";
 		private Remessa _remessa;
 
-		private ObservableCollection<GrupoDemonstrativo> _demonstrativos;
+        private ObservableCollection<GrupoDemonstrativo> _demonstrativos;
 
 		#endregion
 
@@ -198,6 +202,19 @@ namespace BoletoNet
 			get { return this._valorCobrado; }
 			set { this._valorCobrado = value; }
 		}
+
+
+		/// <summary> 
+		/// Retorna o valor utilizado no cod. de barras 
+		/// </summary>
+		/// <remarks>
+        /// Se o valor ValorCobrado estiver preenchido retorna o ValorCobrado,
+        /// caso contrário retorna o ValorBoleto.
+		/// </remarks>
+		public decimal ValorCodBarra
+        {
+			get { return (this.ValorCobrado > 0) ? this.ValorCobrado : this.ValorBoleto; }
+        }
 
 		/// <summary> 
 		/// Retorna o campo para a 1 linha da instrucao.
@@ -325,14 +342,14 @@ namespace BoletoNet
 			set { this._nossoNumero = value; }
 		}
 
-        /// <summary> 
-        /// Condição para Emissão da Papeleta de Cobrança
-        /// 1 = Banco emite e Processa o registro. 2 = Cliente emite e o Banco somente processa o registro
-        /// </summary>        
-        public bool ApenasRegistrar
+		/// <summary> 
+		/// Condição para Emissão da Papeleta de Cobrança
+		/// 0 = Cliente emite e o Banco somente processa o registro, 1 = Banco emite e Processa o registro. 
+		/// </summary>        
+		public TipoEmissao TipoEmissao
         {
-            get { return _apenasRegistrar; }
-            set { _apenasRegistrar = value; }
+            get { return _tipoEmissao; }
+            set { _tipoEmissao = value; }
         }
 
 		/// <summary> 
@@ -548,6 +565,15 @@ namespace BoletoNet
 			set { this._dataOutrosDescontos = value; }
 		}
 
+        /// <summary> 
+        /// Data de Outros Descontos
+        /// </summary>  
+        public DateTime DataLimitePagamento
+        {
+            get { return _dataLimitePagamento; }
+            set { _dataLimitePagamento = value; }
+        }
+
 		/// <summary> 
 		/// Retorna o tipo da modalidade
 		/// </summary>
@@ -609,9 +635,27 @@ namespace BoletoNet
             set { _numeroControle = value; }
         }
 
+		/// <summary>
+		/// Retorna o título (Label) do Avalista, definido como padrão: "Beneficiário final"
+		/// </summary>
+        public string TituloAvalista
+        {
+            get { return _tituloAvalista; }
+            set { _tituloAvalista = value; }
+        }
+
+
         public IBancoCarteira BancoCarteira { get; set; }
 
         public string TipoDeCobranca { get; set; }
+        public string QRCode { get; set; }
+
+        public DateTime? DataDescontoAntecipacao2 { get; set; }
+        public decimal? ValorDescontoAntecipacao2 { get; set; }
+
+        public DateTime? DataDescontoAntecipacao3 { get; set; }
+        public decimal? ValorDescontoAntecipacao3 { get; set; }
+
 
         #endregion Properties
 

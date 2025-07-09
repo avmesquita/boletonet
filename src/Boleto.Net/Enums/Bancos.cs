@@ -10,12 +10,16 @@ namespace BoletoNet.Enums
         Banrisul = 041,
         Bradesco = 237,
         Caixa = 104,
+        Uniprime = 84,
         CECRED = 85,
         HSBC = 399,
         Itau = 341,
+        Maxima = 243,
         [Description("033")]
         Santander = 33,
         Sicredi = 748,
-        Semear = 743
+        Semear = 743,
+        C6Bank = 336,
+        SerFinance = 530
     }
 }

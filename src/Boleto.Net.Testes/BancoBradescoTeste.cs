@@ -11,7 +11,7 @@ namespace BoletoNet.Testes
 
         private BoletoBancario GerarBoletoCarteira16()
         {
-            var vencimento = new DateTime(2015, 7, 20);
+            var vencimento = new DateTime(2023, 1, 20);
             var cedente = new Cedente("00.000.000/0000-00", "Empresa Teste", "0413", "8", "0002916", "5");
             var boleto = new Boleto(vencimento, 123, "16", "00970171092", cedente);
             boleto.NumeroDocumento = "970171092";
@@ -42,7 +42,7 @@ namespace BoletoNet.Testes
 
             boletoBancario.Boleto.Valida();
 
-            string linhaDigitavelValida = "23790.41318 60097.017101 92000.291606 2 64950000012300";
+            string linhaDigitavelValida = "23790.41318 60097.017101 92000.291606 1 92360000012300";
 
             Assert.AreEqual(boletoBancario.Boleto.CodigoBarra.LinhaDigitavel, linhaDigitavelValida, "Linha digitável inválida");
         }
@@ -54,7 +54,7 @@ namespace BoletoNet.Testes
 
             boletoBancario.Boleto.Valida();
 
-            string codigoBarraValida = "23792649500000123000413160097017109200029160";
+            string codigoBarraValida = "23791923600000123000413160097017109200029160";
 
             Assert.AreEqual(boletoBancario.Boleto.CodigoBarra.Codigo, codigoBarraValida, "Código de Barra inválido");
         }
@@ -65,7 +65,7 @@ namespace BoletoNet.Testes
 
         private BoletoBancario GerarBoletoCarteira09()
         {
-            DateTime vencimento = new DateTime(2012, 6, 8);
+            DateTime vencimento = new DateTime(2020, 6, 8);
 
             var cedente = new Cedente("00.000.000/0000-00", "Empresa Teste", "0539", "8", "0032463", "9");
 
@@ -84,7 +84,7 @@ namespace BoletoNet.Testes
 
         private BoletoBancario GerarBoletoComValorCobradoCarteira09()
         {
-            var vencimento = new DateTime(2012, 6, 8);
+            var vencimento = new DateTime(2020, 6, 8);
             var cedente = new Cedente("00.000.000/0000-00", "Empresa Teste", "0539", "8", "0032463", "9");
 
             var boleto = new Boleto(vencimento, 5000, "09", "18194", cedente);
@@ -117,7 +117,7 @@ namespace BoletoNet.Testes
 
             boletoBancario.Boleto.Valida();
 
-            string linhaDigitavelValida = "23790.53909 90000.001819 94003.246306 3 53580000762000";
+            string linhaDigitavelValida = "23790.53909 90000.001819 94003.246306 8 82800000762000";
 
             Assert.AreEqual(boletoBancario.Boleto.CodigoBarra.LinhaDigitavel, linhaDigitavelValida, "Linha digitável inválida");
         }
@@ -129,7 +129,7 @@ namespace BoletoNet.Testes
 
             boletoBancario.Boleto.Valida();
 
-            var linhaDigitavelValida = "23790.53909 90000.001819 94003.246306 1 53580000510000";
+            var linhaDigitavelValida = "23790.53909 90000.001819 94003.246306 5 82800000510000";
 
             Assert.AreEqual(boletoBancario.Boleto.CodigoBarra.LinhaDigitavel, linhaDigitavelValida, "Linha digitável inválida");
         }
@@ -141,7 +141,7 @@ namespace BoletoNet.Testes
 
             boletoBancario.Boleto.Valida();
 
-            string codigoBarraValida = "23793535800007620000539090000001819400324630";
+            string codigoBarraValida = "23798828000007620000539090000001819400324630";
 
             Assert.AreEqual(boletoBancario.Boleto.CodigoBarra.Codigo, codigoBarraValida, "Código de Barra inválido");
         }
@@ -153,7 +153,7 @@ namespace BoletoNet.Testes
 
             boletoBancario.Boleto.Valida();
 
-            var codigoBarraValida = "23791535800005100000539090000001819400324630";
+            var codigoBarraValida = "23795828000005100000539090000001819400324630";
 
             Assert.AreEqual(boletoBancario.Boleto.CodigoBarra.Codigo, codigoBarraValida, "Código de Barra inválido");
         }
@@ -237,7 +237,7 @@ namespace BoletoNet.Testes
 
         private BoletoBancario GerarBoletoCarteira25()
         {
-            DateTime vencimento = new DateTime( 2015, 10, 21 );
+            DateTime vencimento = new DateTime( 2024, 10, 21 );
 
             var cedente = new Cedente( "00.000.000/0000-00", "Empresa Teste", "054", "0", "148870", "8" );
 
@@ -273,7 +273,7 @@ namespace BoletoNet.Testes
 
             boletoBancario.Boleto.Valida();
 
-            string linhaDigitavelValida = "23790.05420 59700.000520 87014.887001 1 65880000046940";
+            string linhaDigitavelValida = "23790.05420 59700.000520 87014.887001 3 98760000046940";
 
             Assert.AreEqual( boletoBancario.Boleto.CodigoBarra.LinhaDigitavel, linhaDigitavelValida, "Linha digitável inválida" );
         }
@@ -285,7 +285,7 @@ namespace BoletoNet.Testes
 
             boletoBancario.Boleto.Valida();
 
-            string codigoBarraValida = "23791658800000469400054259700000528701488700";
+            string codigoBarraValida = "23793987600000469400054259700000528701488700";
 
             Assert.AreEqual( boletoBancario.Boleto.CodigoBarra.Codigo, codigoBarraValida, "Código de Barra inválido" );
         }
@@ -295,7 +295,7 @@ namespace BoletoNet.Testes
 
         private BoletoBancario GerarBoletoCarteira26()
         {
-            DateTime vencimento = new DateTime(2015, 10, 21);
+            DateTime vencimento = new DateTime(2024, 10, 21);
 
             var cedente = new Cedente("00.000.000/0000-00", "Empresa Teste", "054", "0", "148870", "8");
 
@@ -331,7 +331,7 @@ namespace BoletoNet.Testes
 
             boletoBancario.Boleto.Valida();
 
-            string linhaDigitavelValida = "23790.05420 69700.000529 87014.887001 5 65880000046940";
+            string linhaDigitavelValida = "23790.05420 69700.000529 87014.887001 9 98760000046940";
 
             Assert.AreEqual(boletoBancario.Boleto.CodigoBarra.LinhaDigitavel, linhaDigitavelValida, "Linha digitável inválida");
         }
@@ -343,7 +343,7 @@ namespace BoletoNet.Testes
 
             boletoBancario.Boleto.Valida();
 
-            string codigoBarraValida = "23795658800000469400054269700000528701488700";
+            string codigoBarraValida = "23799987600000469400054269700000528701488700";
 
             Assert.AreEqual(boletoBancario.Boleto.CodigoBarra.Codigo, codigoBarraValida, "Código de Barra inválido");
         }

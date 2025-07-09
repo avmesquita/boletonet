@@ -144,6 +144,10 @@ namespace BoletoNet
 					case 21:
 						_IBanco = new Banco_Banestes();
 						break;
+                    //97 - CrediSis
+                    case 97:
+                        _IBanco = new Banco_CrediSis();
+                        break;
 					//004 - Nordeste
 					case 4:
 						_IBanco = new Banco_Nordeste();
@@ -151,6 +155,10 @@ namespace BoletoNet
 					//85 - CECRED
 					case 85:
 						_IBanco = new Banco_Cecred();
+						break;
+                    //136 - Unicred
+					case 136:
+						_IBanco = new Banco_Unicred();
 						break;
                     //655 - Votorantim
                     case 655:
@@ -165,6 +173,18 @@ namespace BoletoNet
                     case 743:
                         _IBanco = new Banco_Semear();
                         break;
+                    case 084:
+                        _IBanco = new Banco_Uniprime();
+                        break;
+                    case 530:
+                        _IBanco = new Banco_SerFinance();
+                        break;
+                    case ((int)Enums.Bancos.Maxima):
+                        _IBanco = new Banco_Maxima();
+                        break;
+					case ((int)Enums.Bancos.C6Bank):
+						_IBanco = new Banco_C6();
+						break;
 					default:
 						throw new Exception("Código do banco não implementando: " + codigoBanco);
 				}

@@ -98,6 +98,10 @@ namespace BoletoNet
                     case 756:
                         _IInstrucao = new Instrucao_Sicoob();
                         break;
+                    //97 - CredSis
+                    case 97:
+                        _IInstrucao = new Instrucao_CrediSIS();
+                        break;
                     //85 - CECRED
                     case 85:
                         _IInstrucao = new Instrucao_Cecred();
@@ -112,6 +116,18 @@ namespace BoletoNet
                         break;
                     case 21:
                         _IInstrucao = new Instrucao_Banestes();
+                        break;
+                    case 4:
+                        _IInstrucao = new Instrucao_BancoNordeste();
+                        break;
+                    case 84: 
+                        _IInstrucao = new Instrucao_Uniprime();
+                        break;
+                    case 530:
+                        _IInstrucao = new Instrucao_SerFinance();
+                        break;
+                    case ((int) Enums.Bancos.C6Bank):
+                        _IInstrucao = new Instrucao_C6();
                         break;
                     default:
                         throw new Exception("Código do banco não implementando: " + codigoBanco);

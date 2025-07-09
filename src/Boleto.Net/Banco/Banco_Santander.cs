@@ -8,7 +8,9 @@ using BoletoNet.Excecoes;
 [assembly: WebResource("BoletoNet.Imagens.033.jpg", "image/jpg")]
 namespace BoletoNet
 {
-    /// <author>  
+	using System.Text;
+
+	/// <author>  
     /// Eduardo Frare
     /// Stiven 
     /// Diogo
@@ -69,7 +71,8 @@ namespace BoletoNet
             string valorNominal = Utils.FormatCode(boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", ""), 10);//10
             string fixo = "9";//1
             string codigoCedente = Utils.FormatCode(boleto.Cedente.Codigo.ToString(), 7);//7
-            string nossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + Mod11Santander(Utils.FormatCode(boleto.NossoNumero, 12), 9);//13
+            //string nossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + Mod11Santander(Utils.FormatCode(boleto.NossoNumero, 12));//13
+            string nossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + CalcularDVSantander(Utils.FormatCode(boleto.NossoNumero, 12));//13
             string IOS = boleto.PercentualIOS.ToString();//1
             string tipoCarteira = boleto.Carteira;//3;
             boleto.CodigoBarra.Codigo = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}",
@@ -113,7 +116,8 @@ namespace BoletoNet
         /// </summary>
         public override void FormataLinhaDigitavel(Boleto boleto)
         {
-            string nossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + Mod11Santander(Utils.FormatCode(boleto.NossoNumero, 12), 9);//13
+            //string nossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + Mod11Santander(Utils.FormatCode(boleto.NossoNumero, 12));//13
+            string nossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + CalcularDVSantander(Utils.FormatCode(boleto.NossoNumero, 12));//13
             string codigoCedente = Utils.FormatCode(boleto.Cedente.Codigo.ToString(), 7);
             string fatorVencimento = FatorVencimento(boleto).ToString();
             string IOS = boleto.PercentualIOS.ToString();//1
@@ -148,28 +152,31 @@ namespace BoletoNet
             string grupo3 = string.Format("{0}{1}{2}{3}", nossoNumero2, IOS, tipoCarteira, calculoDV3);
             grupo3 = " " + grupo3.Substring(0, 5) + "." + grupo3.Substring(5, 6) + " ";
 
-            #endregion
+			#endregion
 
-            #region Grupo4
-            string DVcodigoBanco = Utils.FormatCode(this.Codigo.ToString(), 3);//3
-            string DVcodigoMoeda = boleto.Moeda.ToString();//1
-            string DVvalorNominal = Utils.FormatCode(boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", ""), 10);//10
-            string DVfixo = "9";//1
-            string DVcodigoCedente = Utils.FormatCode(boleto.Cedente.Codigo.ToString(), 7).ToString();//7
-            string DVnossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + Mod11Santander(Utils.FormatCode(boleto.NossoNumero, 12), 9);
-            string DVtipoCarteira = boleto.Carteira;//3;
+			#region Grupo4
+			string DVcodigoBanco = Utils.FormatCode(this.Codigo.ToString(), 3);//3
+			string DVcodigoMoeda = boleto.Moeda.ToString();//1
+			string DVvalorNominal = Utils.FormatCode(boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", ""), 10);//10
+			string DVfixo = "9";//1
+			string DVcodigoCedente = Utils.FormatCode(boleto.Cedente.Codigo.ToString(), 7).ToString();//7
+																									  //string DVnossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + Mod11Santander(Utils.FormatCode(boleto.NossoNumero, 12));
+			string DVnossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + CalcularDVSantander(Utils.FormatCode(boleto.NossoNumero, 12));
+			string DVtipoCarteira = boleto.Carteira;//3;
 
-            string calculoDVcodigo = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}",
-                DVcodigoBanco, DVcodigoMoeda, fatorVencimento, DVvalorNominal, DVfixo, DVcodigoCedente, DVnossoNumero, IOS, DVtipoCarteira);
+			string calculoDVcodigo = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}",
+				DVcodigoBanco, DVcodigoMoeda, fatorVencimento, DVvalorNominal, DVfixo, DVcodigoCedente, DVnossoNumero, IOS, DVtipoCarteira);
 
-            string grupo4 = Mod10Mod11Santander(calculoDVcodigo, 9).ToString() + " ";
+			string grupo4 = Mod10Mod11Santander(calculoDVcodigo, 9).ToString() + " ";
 
-            #endregion
+			////var grupo4 = boleto.CodigoBarra.DigitoVerificador + " ";
 
-            #region Grupo5
+			#endregion
 
-            //4
-            string valorNominal = Utils.FormatCode(boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", ""), 10);//10
+			#region Grupo5
+
+			//4
+			string valorNominal = Utils.FormatCode(boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", ""), 10);//10
 
             string grupo5 = string.Format("{0}{1}", fatorVencimento, valorNominal);
             //grupo5 = grupo5.Substring(0, 4) + " " + grupo5.Substring(4, 1)+" "+grupo5.Substring(5,9);
@@ -183,7 +190,8 @@ namespace BoletoNet
 
         public override void FormataNossoNumero(Boleto boleto)
         {
-            boleto.NossoNumero = string.Format("{0}-{1}", boleto.NossoNumero, Mod11Santander(boleto.NossoNumero, 9));
+            boleto.NossoNumero = string.Format("{0}-{1}", boleto.NossoNumero, Mod11Santander(boleto.NossoNumero));
+            ////boleto.NossoNumero = string.Format("{0}-{1}", boleto.NossoNumero, CalcularDVSantander(boleto.NossoNumero));
         }
 
         public override void FormataNumeroDocumento(Boleto boleto)
@@ -193,10 +201,10 @@ namespace BoletoNet
 
         public override void ValidaBoleto(Boleto boleto)
         {
-            //throw new NotImplementedException("Função não implementada.");
-            if (!((boleto.Carteira == "102") || (boleto.Carteira == "101") || (boleto.Carteira == "201")))
+            var CarteirasValidas = new System.Collections.Generic.HashSet<string>{ "101", "102", "201", "501" };
+            if (!CarteirasValidas.Contains(boleto.Carteira))
             {
-                string exceptionMessage = String.Format("A carteira '{0}' não foi implementada. Carteiras válidas: 101, 102 e 201.", boleto.Carteira);
+                string exceptionMessage = String.Format("A carteira '{0}' não foi implementada. Carteiras válidas: 101, 102, 201 e 501.", boleto.Carteira);
                 throw new NotImplementedException(exceptionMessage);
             }
 
@@ -224,7 +232,7 @@ namespace BoletoNet
             }
 
             if (boleto.Cedente.Codigo.ToString().Length > 8)
-                throw new NotImplementedException("Código cedente deve ter 8 posições.");
+                throw new NotImplementedException("Código cedente deve ter 8 posições => " + boleto.Cedente.Codigo.ToString());
 
             // Atribui o nome do banco ao local de pagamento
             if (string.IsNullOrEmpty(boleto.LocalPagamento))
@@ -239,37 +247,84 @@ namespace BoletoNet
             boleto.FormataCampos();
         }
 
-        private static int Mod11Santander(string seq, int lim)
+		private static int Mod11Santander(string nossoNumero)
         {
-            int ndig = 0;
-            int nresto = 0;
-            int total = 0;
-            int multiplicador = 5;
+            var pesos = new[] { 2, 3, 4, 5, 6, 7, 8, 9, 2, 3, 4, 5, 6, 7, 8, 9 };
+            var soma = 0;
+            var indice = 0;
 
-            while (seq.Length > 0)
+            for (var posicao = nossoNumero.Length - 1; posicao >= 0; posicao--)
             {
-                int valorPosicao = Convert.ToInt32(seq.Substring(0, 1));
-                total += valorPosicao * multiplicador;
-                multiplicador--;
-
-                if (multiplicador == 1)
-                {
-                    multiplicador = 9;
-                }
-
-                seq = seq.Remove(0, 1);
+                var calculo = Convert.ToInt32(nossoNumero[posicao].ToString()) * pesos[indice];
+                
+                soma += calculo;
+                indice++;
             }
 
-            nresto = total - ((total / 11) * 11);
+            var divisao = soma / 11;
+            var resto = soma % 11;
 
-            if (nresto == 0 || nresto == 1)
-                ndig = 0;
-            else if (nresto == 10)
-                ndig = 1;
+            var retorno = 0;
+
+            if (resto == 1 || resto == 0)
+            {
+                retorno = 0;
+            }
             else
-                ndig = (11 - nresto);
+            {
+                retorno = 11 - resto;
 
-            return ndig;
+                if (retorno > 9)
+                {
+                    retorno = 0;
+                }
+            }
+
+            return retorno;
+            ////var digito = 0;
+            ////var multiplicador = 2;
+            ////var total = 0;
+            ////var nossoNumeroArray = nossoNumero.ToCharArray().Reverse();
+
+            ////foreach (var numero in nossoNumeroArray)
+            ////{
+            ////    total += multiplicador * numero;
+
+            ////    if (++multiplicador > 9)
+            ////    {
+            ////        multiplicador = 2;
+            ////    }
+            ////}
+
+            ////var modulo = total % 11;
+
+            ////if (modulo > 1)
+            ////{
+            ////    digito = 11 - modulo;
+            ////}
+
+            ////return digito;
+        }
+
+        private static string CalcularDVSantander(string texto)
+        {
+            //Codigo retirado do projeto Boleto2net
+            string digito;
+            int pesoMaximo = 9, soma = 0, peso = 2;
+            for (var i = texto.Length - 1; i >= 0; i--)
+            {
+                soma = soma + Convert.ToInt32(texto.Substring(i, 1)) * peso;
+                if (peso == pesoMaximo)
+                    peso = 2;
+                else
+                    peso = peso + 1;
+            }
+            var resto = soma % 11;
+            if (resto <= 1)
+                digito = "0";
+            else
+                digito = (11 - resto).ToString();
+            return digito;
         }
 
         private static int Mod10Mod11Santander(string seq, int lim)
@@ -1013,32 +1068,73 @@ namespace BoletoNet
 
                 //Código de movimento ==> 016 - 017
                 _segmentoR += ObterCodigoDaOcorrencia(boleto);
-
-                if (boleto.OutrosDescontos > 0)
+                                               
+                //Suelton - 14/12/2018 - Implementação do 2 desconto por antecipação
+                if (boleto.DataDescontoAntecipacao2.HasValue && boleto.ValorDescontoAntecipacao2.HasValue)
                 {
-                    //Código do desconto 2 ==> 018 - 018
-                    _segmentoR += "1";
-
-                    //Data do desconto 2 ==> 019 - 026
-                    _segmentoR += boleto.DataOutrosDescontos.ToString("ddMMyyyy");
-
-                    //Valor/Percentual a ser concedido ==> 027 - 041
-                    _segmentoR += Utils.FitStringLength(boleto.OutrosDescontos.ApenasNumeros(), 15, 15, '0', 0, true, true, true);
+                    _segmentoR += "1" + //'1' = Valor Fixo Até a Data Informada
+                        Utils.FitStringLength(boleto.DataDescontoAntecipacao2.Value.ToString("ddMMyyyy"), 8, 8, '0', 0, true, true, false) +
+                        Utils.FitStringLength(boleto.ValorDescontoAntecipacao2.ApenasNumeros(), 15, 15, '0', 0, true, true, true);
                 }
                 else
                 {
-                    //Código do desconto 2 ==> 018 - 018
-                    _segmentoR += "0";
-
-                    //Data do desconto 2 ==> 019 - 026
-                    _segmentoR += "0".PadLeft(8, '0');
-
-                    //Valor/Percentual a ser concedido ==> 027 - 041
-                    _segmentoR += "0".PadLeft(15, '0');
+                    // Desconto 2
+                    _segmentoR += "000000000000000000000000"; //24 zeros
                 }
 
-                //Reservado (uso Banco) ==> 042 – 065
-                _segmentoR += " ".PadLeft(24, ' ');
+                _segmentoR += "                        "; //24 zeros - comentário abaixo
+
+                #region ::. Deprecado .::
+
+                //Adriano - 06/02/2020
+                //De acordo com validação com o Santander, este campo deve ter 24 posições em branco
+
+                //Suelton - 14/12/2018 - Implementação do 3 desconto por antecipação
+                //if (boleto.DataDescontoAntecipacao3.HasValue && boleto.ValorDescontoAntecipacao3.HasValue)
+                //{
+                //    _segmentoR += "1" + //'1' = Valor Fixo Até a Data Informada
+                //                  Utils.FitStringLength(boleto.DataDescontoAntecipacao3.Value.ToString("ddMMyyyy"), 8, 8, '0', 0, true, true, false) +
+                //                  Utils.FitStringLength(boleto.ValorDescontoAntecipacao3.ApenasNumeros(), 15, 15, '0', 0, true, true, true);
+                //}
+                //else
+                //{
+                //    // Desconto 3
+                //    _segmentoR += "000000000000000000000000"; //24 zeros
+                //}
+
+                #endregion
+
+                #region Deprecado
+                //Com a implementação dos campo descontos 2 e 3 não é mais recomendado utilizar o campo outros descontos
+                //a lógica já foi toda implementada nesses campos
+                //else if (boleto.OutrosDescontos > 0)
+                //{
+                //    //Código do desconto 2 ==> 018 - 018
+                //    _segmentoR += "1";
+
+                //    //Data do desconto 2 ==> 019 - 026
+                //    _segmentoR += boleto.DataOutrosDescontos.ToString("ddMMyyyy");
+
+                //    //Valor/Percentual a ser concedido ==> 027 - 041
+                //    _segmentoR += Utils.FitStringLength(boleto.OutrosDescontos.ApenasNumeros(), 15, 15, '0', 0, true, true, true);
+                //}
+                //else
+                //{
+                //    //Código do desconto 2 ==> 018 - 018
+                //    _segmentoR += "0";
+
+                //    //Data do desconto 2 ==> 019 - 026
+                //    _segmentoR += "0".PadLeft(8, '0');
+
+                //    //Valor/Percentual a ser concedido ==> 027 - 041
+                //    _segmentoR += "0".PadLeft(15, '0');
+
+
+                //}
+
+                ////Reservado (uso Banco) ==> 042 – 065
+                //_segmentoR += " ".PadLeft(24, ' '); 
+                #endregion
 
                 if (boleto.PercMulta > 0)
                 {
@@ -1226,7 +1322,7 @@ namespace BoletoNet
             {
                 base.GerarDetalheRemessa(boleto, numeroRegistro, tipoArquivo);
 
-                string controle_partic = new string(' ', 25);
+                //string controle_partic = new string(' ', 25);
                 string sacador_aval = new string(' ', 30);
                 string _detalhe;
 
@@ -1250,16 +1346,21 @@ namespace BoletoNet
 
                 //Conta cobrança cedente ==> 030 - 037                
                 if (boleto.Cedente.ContaBancaria.Conta.Length == 9 || (!String.IsNullOrEmpty(boleto.Cedente.ContaBancaria.DigitoConta) && boleto.Cedente.ContaBancaria.Conta.Length == 8))
-                    _detalhe += Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta.Substring(0, 7), 8, 8, '0', 0, true, true, true);
+                    _detalhe += Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta.Substring(0, 8), 8, 8, '0', 0, true, true, true); //alterado por diegodariolli - 15/03/2018 - estava cortando um digito
                 else
                     _detalhe += Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta, 8, 8, '0', 0, true, true, true);
                 //Bloco if-else adicionado por Jéferson (jefhtavares). Segundo o Banco o código de transmissão muda de acordo com o tamanho (length) da conta corrente
 
                 //Número de controle do participante, controle do cedente ==> 038 - 062
-                _detalhe += controle_partic;
+                var numeroControle = string.Empty;
+                if (!string.IsNullOrEmpty(boleto.NumeroControle))
+                    numeroControle = boleto.NumeroControle;
+
+                _detalhe += Utils.FitStringLength(numeroControle, 25, 25, ' ', 0, true, true, false); //alterado por diegodariolli - 15/03/2018 - estava passando vazio impossibilitando controle interno
 
                 //NossoNumero com DV, pegar os 8 primeiros dígitos, da direita para esquerda ==> 063 - 070
-                string nossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + Mod11Santander(Utils.FormatCode(boleto.NossoNumero, 12), 9);//13
+                string nossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + Mod11Santander(Utils.FormatCode(boleto.NossoNumero, 12));//13
+                ////string nossoNumero = Utils.FormatCode(boleto.NossoNumero, 12) + CalcularDVSantander(Utils.FormatCode(boleto.NossoNumero, 12));//13
                 _detalhe += Utils.Right(nossoNumero, 8, '0', true);
 
                 //Data do segundo desconto 9(06) ==> 071 - 076
@@ -1334,14 +1435,14 @@ namespace BoletoNet
                 _detalhe += "033";
 
                 //Código da agência cobradora do Banco Santander informar somente se carteira for igual a 5, caso contrário, informar zeros. ==> 143 - 147
-                if (!String.IsNullOrEmpty(boleto.Cedente.ContaBancaria.DigitoAgencia) && boleto.Carteira == "101")
+                if (carteira == "5") //alterado por diegodariolli - 15/03/2018 - verificação já feita anteriormente
                 {
                     _detalhe += Utils.FitStringLength(boleto.Cedente.ContaBancaria.Agencia, 4, 4, '0', 0, true, true, true);
                     _detalhe += Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true);
                 }
                 else
                 {
-                    _detalhe += Utils.FitStringLength("0" + boleto.Cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);
+                    _detalhe += Utils.FitStringLength("0", 5, 5, '0', 0, true, true, true); //alterado por diegodariolli - 15/03/2018
                 }
 
 
@@ -1405,7 +1506,13 @@ namespace BoletoNet
                 _detalhe += Utils.FitStringLength(boleto.JurosMora.ApenasNumeros(), 13, 13, '0', 0, true, true, true);
 
                 //Data limite para concessão de desconto ==> 174 - 179
-                _detalhe += boleto.DataVencimento.ToString("ddMMyy");
+                var dataLimiteConcessaoDesconto = "000000";
+                if (boleto.ValorDesconto > 0)
+                {
+                    dataLimiteConcessaoDesconto = boleto.DataVencimento.ToString("ddMMyy");
+                }
+
+                _detalhe += dataLimiteConcessaoDesconto;
 
                 //Valor de desconto a ser concedido ==> 180 - 192
                 _detalhe += Utils.FitStringLength(boleto.ValorDesconto.ApenasNumeros(), 13, 13, '0', 0, true, true, true);
@@ -1488,15 +1595,13 @@ namespace BoletoNet
             try
             {
 
-                string _detalhe = "";
+                var linhasGeradas = new StringBuilder();
 
                 foreach (var _instrucao in boleto.Instrucoes)
                 {
+	                var _detalhe = string.Empty;
 
-                    if (!string.IsNullOrEmpty(_detalhe))
-                        _detalhe += Environment.NewLine;
-
-                    //Código do registro = 2 (Recibo do Sacado) 3, 4, 5, 6 e 7 (Ficha de Compensação) ==> 001 - 001
+	                //Código do registro = 2 (Recibo do Sacado) 3, 4, 5, 6 e 7 (Ficha de Compensação) ==> 001 - 001
                     _detalhe += "2";
 
                     //Uso do Banco ==> 002 - 017
@@ -1537,6 +1642,19 @@ namespace BoletoNet
 
                     //Número sequêncial do registro no arquivo ==> 395 - 400
                     _detalhe += Utils.FitStringLength(numeroRegistro.ToString(), 6, 6, '0', 0, true, true, true);
+                    
+                    _detalhe = Utils.SubstituiCaracteresEspeciais(_detalhe);
+
+                    if (!string.IsNullOrEmpty(_detalhe))
+                    {
+                        if (linhasGeradas.Length > 0)
+                        {
+                            linhasGeradas.Append(Environment.NewLine);
+                        }
+
+	                    linhasGeradas.Append(Utils.SubstituiCaracteresEspeciais(_detalhe));
+                    }
+					
                     numeroRegistro++;
 
                 }
@@ -1547,10 +1665,7 @@ namespace BoletoNet
                     if (CodigoRegistroSacado > 7)
                         throw new Exception("So pode ter 3 mensagens no recibo do sacdo.");
 
-                    if (!string.IsNullOrEmpty(_detalhe))
-                        _detalhe += Environment.NewLine;
-
-                    _detalhe += Environment.NewLine;
+                    var _detalhe = string.Empty;
 
                     //((Instrucao_Santander)_instrucao).
 
@@ -1595,13 +1710,23 @@ namespace BoletoNet
 
                     //Número sequêncial do registro no arquivo ==> 395 - 400
                     _detalhe += Utils.FitStringLength(numeroRegistro.ToString(), 6, 6, '0', 0, true, true, true);
-                    numeroRegistro++;
+                    
+                    _detalhe = Utils.SubstituiCaracteresEspeciais(_detalhe);
 
+                    if (!string.IsNullOrEmpty(_detalhe))
+                    {
+                        if (linhasGeradas.Length > 0)
+                        {
+                            linhasGeradas.Append(Environment.NewLine);
+                        }
+
+                        linhasGeradas.Append(Utils.SubstituiCaracteresEspeciais(_detalhe));
+                    }
+
+                    numeroRegistro++;
                 }
 
-                _detalhe = Utils.SubstituiCaracteresEspeciais(_detalhe);
-
-                return _detalhe;
+                return linhasGeradas.ToString();
             }
             catch (Exception ex)
             {

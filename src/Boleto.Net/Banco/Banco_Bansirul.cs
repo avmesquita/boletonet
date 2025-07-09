@@ -136,12 +136,10 @@ namespace BoletoNet
                 #region Campo 1
 
                 //Campo 1
-                Metade1 = string.Empty;
                 string M = boleto.Moeda.ToString();
                 string AAA = boleto.Cedente.ContaBancaria.Agencia.Substring(0, 3);
                 Metade1 = "041" + M + "2";
 
-                Metade2 = string.Empty;
                 Metade2 = "1" + AAA;
                 string d1 = Mod10Banri(Metade1 + Metade2).ToString();
                 Campo1 = Metade1 + "." + Metade2 + d1;
@@ -151,15 +149,13 @@ namespace BoletoNet
                 #region Campo 2
 
                 //Campo 2
-                Metade1 = string.Empty;
                 //Metade1 = Cedente.Substring(0, 5);
                 string A = boleto.Cedente.ContaBancaria.Agencia.Substring(3, 1);
-                string CCCC = Cedente.Substring(0, 4);
+                string CCCC = boleto.Cedente.ContaBancaria.Conta.Substring(0, 4);
                 Metade1 = A + CCCC;
 
-                Metade2 = string.Empty;
                 //Metade2 = Cedente.Substring(5, 2) + NossoNumero.Substring(0, 3);
-                string CCC = Cedente.Substring(4, 3);
+                string CCC = boleto.Cedente.ContaBancaria.Conta.Substring(4, 3);
                 string NN = NossoNumero.Substring(0, 2);
                 Metade2 = CCC + NN;
                 string d2 = Mod10Banri(Metade1 + Metade2).ToString();
@@ -170,11 +166,9 @@ namespace BoletoNet
                 #region Campo 3
 
                 //Campo 3
-                Metade1 = string.Empty;
                 string NNNNN = NossoNumero.Substring(2, 5);
                 Metade1 = NNNNN;
 
-                Metade2 = string.Empty;
                 string XX = _primDigito.ToString() + _segDigito.ToString();
                 string N = NossoNumero.Substring(7, 1);
                 Metade2 = N + "40" + XX;
@@ -207,8 +201,6 @@ namespace BoletoNet
                 #region Campo 1
 
                 //Campo 1
-                Metade1 = string.Empty;
-                Metade2 = string.Empty;
                 string M = boleto.Moeda.ToString();
                 string AAA = boleto.Cedente.ContaBancaria.Agencia.Substring(1, 3);
                 Metade1 = "041" + M + "2";
@@ -221,8 +213,6 @@ namespace BoletoNet
                 #region Campo 2
 
                 //Campo 2
-                Metade1 = string.Empty;
-                Metade2 = string.Empty;
                 Metade1 = Cedente.Substring(0, 5);
                 //Metade2 = Cedente.Substring(5, 2) + NossoNumero.Substring(0, 2);
                 Metade2 = Cedente.Substring(5, 2) + NossoNumero.Substring(0, 3);
@@ -234,8 +224,6 @@ namespace BoletoNet
                 #region Campo 3
 
                 //Campo 3
-                Metade1 = string.Empty;
-                Metade2 = string.Empty;
                 string XX = _primDigito.ToString() + _segDigito.ToString();
                 //Metade1 = NossoNumero.Substring(2, 5);
                 Metade1 = NossoNumero.Substring(3, 5);
@@ -296,7 +284,7 @@ namespace BoletoNet
                 //11: 4 (agência) + 7 (cedente)
                 string codCedente = boleto.Cedente.Codigo.Replace(".", "").Replace("-", "").Substring(boleto.Cedente.Codigo.Length < 11 ? 0 : 4, 7);
 
-                campoLivre = "21" + boleto.Cedente.ContaBancaria.Agencia + codCedente + nossoNumero + "40";
+                campoLivre = "21" + boleto.Cedente.ContaBancaria.Agencia.Substring(0, 4) + codCedente + nossoNumero + "40";
                 string ncCodBarra = CalcularNCCodBarras(campoLivre);
                 int.TryParse(ncCodBarra.Substring(0, 1), out _primDigito);
                 int.TryParse(ncCodBarra.Substring(1, 1), out _segDigito);
@@ -864,9 +852,12 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0327, 008, 0, boleto.Sacado.Endereco.CEP, '0'));                //327-334
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0335, 015, 0, boleto.Sacado.Endereco.Cidade.ToUpper(), ' '));   //335-349
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0350, 002, 0, boleto.Sacado.Endereco.UF.ToUpper(), ' '));       //350-351
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0352, 004, 1, 0, '0'));                                         //352-355
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0356, 001, 0, string.Empty, ' '));                              //356-356
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0357, 013, 2, 0, '0'));                                         //357-369
+                //Mudanças implementadas no layout CNAB400 em 27/04/2018 para padronização do mesmo mediante funcionamento da Nova Plataforma de Cobrança – FEBRABAN - EricValenzi
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0352, 018, 0, string.Empty, ' '));                              //352-369
+                //reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0352, 004, 1, 0, '0'));                                         //352-355
+                //reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0356, 001, 0, string.Empty, ' '));                              //356-356
+                //reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0357, 013, 2, 0, '0'));                                         //357-369
+
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0370, 002, 0, vQtdeDiasCodigo_9_ou_15, '0'));                   //370-371
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0372, 023, 0, string.Empty, ' '));                              //372-394
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0395, 006, 0, numeroRegistro, '0'));                            //395-400
